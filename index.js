@@ -44,10 +44,17 @@ async function run() {
     // jwt authentication
     app.post("/jwt", async (req, res) => {
       const user = req.body;
+      console.log("user for jwt", user);
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: "1h",
       });
-      res.cookie("token", token, cookieOptions).send(token);
+      res.cookie("token", token, cookieOptions).send({ success: true });
+    });
+
+    app.post("/logout", async (req, res) => {
+      const user = req.body;
+      console.log("logging out", user);
+      res.clearCookie("token", { maxAge: 0 }).send({ success: true });
     });
 
     // Send a ping to confirm a successful connection
