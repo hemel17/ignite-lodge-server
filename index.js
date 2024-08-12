@@ -77,7 +77,7 @@ async function run() {
     });
 
     // all rooms
-    app.get("/rooms", verifyToken, async (req, res) => {
+    app.get("/rooms", async (req, res) => {
       const result = await roomsCollection.find().toArray();
       res.send(result);
     });
