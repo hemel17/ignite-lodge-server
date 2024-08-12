@@ -24,6 +24,22 @@ const cookieOptions = {
   sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
 };
 
+const verifyToken = (req, res, next) => {
+  const token = req?.cookies?.token;
+
+  if (!token) {
+    return res.status(401).send({ message: "Unauthorized access!" });
+  }
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).send({ message: "Unauthorized access!" });
+    }
+    req.user = decoded;
+    next();
+  });
+};
+
 // mongoDB
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.vgu9onq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -61,7 +77,7 @@ async function run() {
     });
 
     // all rooms
-    app.get("/rooms", async (req, res) => {
+    app.get("/rooms", verifyToken, async (req, res) => {
       const result = await roomsCollection.find().toArray();
       res.send(result);
     });
