@@ -58,6 +58,9 @@ async function run() {
     await client.connect();
 
     const roomsCollection = client.db("igniteLodgeDB").collection("rooms");
+    const featuredRoomsCollection = client
+      .db("igniteLodgeDB")
+      .collection("featuredRooms");
 
     // jwt authentication
     app.post("/jwt", async (req, res) => {
@@ -72,13 +75,19 @@ async function run() {
     // clear cookies after logout
     app.post("/logout", async (req, res) => {
       const user = req.body;
-      console.log("logging out", user);
+      // console.log("logging out", user);
       res.clearCookie("token", { maxAge: 0 }).send({ success: true });
     });
 
     // all rooms
     app.get("/rooms", async (req, res) => {
       const result = await roomsCollection.find().toArray();
+      res.send(result);
+    });
+
+    //featured rooms
+    app.get("/featuredRooms", async (req, res) => {
+      const result = await featuredRoomsCollection.find().toArray();
       res.send(result);
     });
 
