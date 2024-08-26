@@ -81,7 +81,12 @@ async function run() {
 
     // all rooms
     app.get("/rooms", async (req, res) => {
-      const result = await roomsCollection.find().toArray();
+      const { min, max } = req.query;
+      let query = {};
+      if (min && max) {
+        query.PricePerNight = { $gte: parseInt(min), $lte: parseInt(max) };
+      }
+      const result = await roomsCollection.find(query).toArray();
       res.send(result);
     });
 
