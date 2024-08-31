@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -87,6 +87,14 @@ async function run() {
         query.PricePerNight = { $gte: parseInt(min), $lte: parseInt(max) };
       }
       const result = await roomsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    // single room
+    app.get("/room/:id", async (req, res) => {
+      const { id } = req.params;
+      const query = { _id: new ObjectId(id) };
+      const result = await roomsCollection.findOne(query);
       res.send(result);
     });
 
