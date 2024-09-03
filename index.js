@@ -98,9 +98,20 @@ async function run() {
       res.send(result);
     });
 
-    //featured rooms
-    app.get("/featuredRooms", async (req, res) => {
-      const result = await featuredRoomsCollection.find().toArray();
+    // booked rooms
+    app.put("/rooms/:id", async (req, res) => {
+      const id = req.params;
+      const { email, selectedDate } = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const room = {
+        $set: {
+          Email: email,
+          Available: false,
+          BookingDate: selectedDate,
+        },
+      };
+      const result = await roomsCollection.updateOne(filter, room, options);
       res.send(result);
     });
 
